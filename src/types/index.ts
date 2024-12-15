@@ -1,4 +1,4 @@
-interface IProduct {
+export interface IProduct {
     id: string;
     description: string;
     image: string;
@@ -7,7 +7,7 @@ interface IProduct {
     price: number;
 }
 
-interface Contacts {
+export interface Contacts {
     payment: string;
     email: string;
     phone: string;
@@ -15,11 +15,11 @@ interface Contacts {
 
 }
 
-type TProductCard = Pick<IProduct, 'category' | 'title' | 'image' | 'price'>;
+export type TProductCard = Pick<IProduct, 'category' | 'title' | 'image' | 'price'>;
 
-type TProductDescription = Pick<IProduct, 'category' | 'title' | 'image' | 'price' | 'description'>;
+export type TProductDescription = Pick<IProduct, 'category' | 'title' | 'image' | 'price' | 'description'>;
 
-type TProductBasket = {
+export type TProductBasket = {
     index: number;
     title: string;
     price: number;
@@ -27,22 +27,22 @@ type TProductBasket = {
 
 
 //--------------------------API-----------------------------
-type APIListResponse<Type> = {
+export type APIListResponse<Type> = {
     total: number;
     items: Type[];
 }
 
-interface Order extends Contacts{
+export interface Order extends Contacts{
     total: number;
     items: string[];
 }
 
-interface OrderResult {
+export interface OrderResult {
     id: string;
     total: number;
 }
 
-interface IProductAPI {
+export interface IProductAPI {
     getProducts: () => Promise<APIListResponse<IProduct>>;
     orderProducts: (order: Order) => Promise<OrderResult>;
 }
@@ -51,14 +51,14 @@ interface IProductAPI {
 
 //--------------------------Model-----------------------------
 
-interface IProductsData {
+export interface IProductsData {
     products: IProduct[];
     select: string | null;
     addProduct(product: IProduct): void;
     getProduct(productId: string): IProduct;
 }
 
-interface IBasketModal {
+export interface IBasketModal {
     items: IProduct[];
     total: number;
     addProduct(product: IProduct): void;

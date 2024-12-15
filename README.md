@@ -210,7 +210,7 @@ type TProductBasket = {
 Методы класса:
 
 - setСatalog(): void — отображает карточки товаров
-- set Basketcounter(newBasketCounter: HTMLElement): void — сеттер для счётчика товаров в корзине
+- set Basketcounter(newBasketCounter: HTMLElement): void — устанавливает значение счётчика товаров в корзине
 
 
 #### Класс Card
@@ -224,7 +224,7 @@ type TProductBasket = {
 Методы:
 - setData(productData: IProduct): void - заполняет атрибуты элементов карточки
 - render(): HTMLElement - возвращает заполненную карточку с установленными слушателями
-- getId(): string - возвращает уникальный id товара
+- getId(): string - возвращает id товара
 
 #### Класс Modal
 
@@ -235,8 +235,8 @@ type TProductBasket = {
 - `constructor(selector: string, event: IEvents)`
 
 Методы:
-- open(content: HTMLElement): void — метод класса, заполняющий элементы модального окна
-- close(): void — очищает содержимое модального окна при закрытии, чтобы подготовить его к следующему открытию
+- open(content: HTMLElement): void — заполняет элементы модального окна
+- close(): void — очищает содержимое модального окна при закрытии
 
 #### Класс Form
 Класс отвечает за управлением логикой форм, отображаемых в модальном окне. Он обрабатывает поля формы, валидирует их, управляет состоянием кнопки отправки и генерирует события при отправке.
