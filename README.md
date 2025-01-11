@@ -46,6 +46,16 @@ yarn build
 
 ## Данные и типы данных, используемые в приложении
 
+Страница
+
+```
+
+interface IPage {
+    BasketCounter: string
+    Catalog: IProduct[];
+}
+```
+
 Товар
 
 ```
@@ -70,7 +80,6 @@ interface IProductsData {
     tobasket: string | null;
 }
 ```
-
 
 Контакты покупателя
 
@@ -210,7 +219,7 @@ type TProductBasket = {
 Методы класса:
 
 - setСatalog(): void — отображает карточки товаров
-- set Basketcounter(newBasketCounter: HTMLElement): void — устанавливает значение счётчика товаров в корзине
+- set BasketCounter(newBasketCounter: string): void — устанавливает значение счётчика товаров в корзине
 
 
 #### Класс Card

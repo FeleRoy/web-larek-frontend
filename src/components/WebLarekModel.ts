@@ -13,11 +13,7 @@ export class ProductsData {
         this.products.push(product)
     }
     getProduct(productId: string) {
-        this.products.forEach((item) => {
-            if (item.id === productId) {
-                return item;
-            }
-        })
+        return this.products.find(item => item.id === productId)
     }
 }
 
@@ -28,7 +24,7 @@ export class ContactsData {
     address: string;
 
     checkValidation(data: Record<keyof Contacts, string>) {
-        
+
     }
 }
 
@@ -38,9 +34,11 @@ export class BasketModal {
 
     addProduct(product: IProduct) {
         this.items.push(product);
+        this.total += product.price;
     }
     removeProduct(product: IProduct) {
         this.items = this.items.filter((item) =>{ item.id !== product.id})
+        this.total -= product.price;
     }
 
 }
