@@ -1,5 +1,5 @@
 import { IProduct, TProductCard, IPage } from "../types";
-import { cloneTemplate, ensureElement } from "../utils/utils";
+import { cloneTemplate, ensureElement,  } from "../utils/utils";
 import { Component } from "./base/Component";
 import { IEvents } from "./base/events";
 
@@ -19,8 +19,8 @@ export class Page extends Component<IPage> {
         this.cardCatalogTemplate = ensureElement('#card-catalog', this.container) as HTMLTemplateElement;
     }
 
-    set Catalog(Products: IProduct[]){
-        Products.forEach((product)=>{
+    set Catalog(products: IProduct[]){
+        products.forEach((product)=>{
             const card = new Card(cloneTemplate(this.cardCatalogTemplate), this.event);
             card.setData(product);
             this.gallery.append(card.render());
@@ -67,12 +67,54 @@ export class Card extends Component<IProduct> {
         return this.cardId;
     }
 }
-// class Modal extends Component {
-    
-// }
-// class Form extends Component {
-    
-// }
+export class Modal<T> extends Component<T> {
+    protected event: IEvents;
+    protected modalContainer: HTMLElement;
+    protected buttonClose: HTMLElement;
+
+    constructor(selector: string, event: IEvents){
+        super(document.querySelector(selector));
+        this.event = event;
+        this.buttonClose = ensureElement('.modal__close', this.container);
+        this.modalContainer = ensureElement('.modal__content', this.container);
+    }
+
+    protected closeByEsc = (evt: KeyboardEvent)=>{
+        if(evt.key === "Escape"){
+            this.close();
+        }
+    };
+    protected closeByOverlay = (evt: PointerEvent)=>{
+        if (evt.currentTarget === evt.target) {
+            this.close();
+        }
+    };
+
+    open(content: HTMLElement){
+        this.modalContainer.append(content);
+        this.container.classList.add('modal_active');
+        this.buttonClose.addEventListener('click', ()=>{
+            this.close();
+        });
+        document.addEventListener('keydown', this.closeByEsc);
+        this.container.addEventListener('click', this.closeByOverlay);
+    }
+
+    close(){
+        this.container.classList.remove('modal_active');
+        this.modalContainer.innerHTML = '';
+        document.removeEventListener('keydown', this.closeByEsc);
+        this.container.removeEventListener('click', this.closeByOverlay);
+    }
+
+}
+export class Form extends Component<HTMLElement> {
+    protected event: IEvents;
+    constructor(selector: string, event: IEvents){
+        super(document.querySelector(selector));
+        this.event = event;
+    }
+}
 // class Basket extends Component {
     
 // }
