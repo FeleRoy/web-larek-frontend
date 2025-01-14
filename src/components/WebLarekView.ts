@@ -1,4 +1,4 @@
-import { IProduct, TProductCard, IPage } from "../types";
+import { IProduct, TProductCard, IPage, TProductBasket, OrderResult } from "../types";
 import { cloneTemplate, ensureElement,  } from "../utils/utils";
 import { Component } from "./base/Component";
 import { IEvents } from "./base/events";
@@ -33,19 +33,22 @@ export class Page extends Component<IPage> {
 
 }
 export class Card extends Component<IProduct> {
-    protected cardCategory: HTMLElement;
+    protected cardCategory?: HTMLElement;
     protected cardTitle: HTMLElement;
-    protected cardImage: HTMLImageElement;
+    protected cardImage?: HTMLImageElement;
     protected cardPrice: HTMLElement;
+    protected cardText?: HTMLElement;
     protected cardId: string;
+    //protected cardBasketIndex?: string;
     protected event: IEvents;
 
     constructor(container: HTMLElement, event: IEvents) {
         super(container);
-        this.cardCategory = ensureElement('.card__category', this.container);
+        this.cardCategory = container.querySelector('.card__category');
         this.cardTitle = ensureElement('.card__title', this.container);
-        this.cardImage = ensureElement<HTMLImageElement>('.card__image', this.container);
+        this.cardImage = container.querySelector('.card__image');
         this.cardPrice = ensureElement('.card__price', this.container);
+        this.cardText = container.querySelector('.card__text');
         this.event = event;
         this.container.addEventListener('click',()=>{
             this.event.emit('product:select');
@@ -58,10 +61,32 @@ export class Card extends Component<IProduct> {
         this.setText(this.cardTitle, productData.title);
         this.setImage(this.cardImage, productData.image);
         this.setText(this.cardPrice, `${productData.price} синапсов`);
+        this.setText(this.cardText, productData.description);
         this.cardId = productData.id;
+        if(this.cardCategory){
+            switch(productData.category){
+                case "софт-скил":
+                    this.cardCategory.classList.add('card__category_soft');
+                    break;
+                case "другое":
+                    this.cardCategory.classList.add('card__category_other');
+                    break;
+                case "дополнительное":
+                    this.cardCategory.classList.add('card__category_additional');
+                    break;
+                case "кнопка":
+                    this.cardCategory.classList.add('card__category_button');
+                    break;
+                case "хард-скил":
+                    this.cardCategory.classList.add('card__category_hard');
+                    break;
+            }
+        }
     }
 
-    
+    // set basketIndex(){
+
+    // }    
 
     getId() {
         return this.cardId;
@@ -108,16 +133,79 @@ export class Modal<T> extends Component<T> {
     }
 
 }
-export class Form extends Component<HTMLElement> {
+export class Form extends Component<HTMLFormElement> {
     protected event: IEvents;
-    constructor(selector: string, event: IEvents){
-        super(document.querySelector(selector));
+    protected submitButton: HTMLButtonElement;
+    protected errors: HTMLElement;
+    protected form: HTMLFormElement;
+    protected buttonCard?: HTMLButtonElement;
+    protected buttonCash?: HTMLButtonElement;
+    protected inputAddress?: HTMLElement;
+    protected inputEmail?: HTMLElement;
+    protected inputPhone?: HTMLElement;
+    constructor(container: HTMLElement, event: IEvents){
+        super(container);
+        this.event = event;
+        this.submitButton = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);
+        this.errors = ensureElement('.form__errors', this.container);
+        this.form = this.container as HTMLFormElement;
+
+        this.buttonCard = this.container.querySelector('button[name=card]');
+        this.buttonCash = this.container.querySelector('button[name=cash]');
+        this.inputAddress = this.container.querySelector('input[name=address]');
+        this.inputEmail = this.container.querySelector('input[name=email]');
+        this.inputPhone = this.container.querySelector('input[name=phone');
+    }
+
+    isValid(){
+        
+    }
+
+    clear(){
+        this.form.reset();
+    }
+
+}
+
+export class Basket extends Component<TProductBasket> {
+    protected event: IEvents;
+    protected basketList: HTMLElement;
+    protected basketPrice: HTMLElement;
+    protected basketButton: HTMLElement;
+    constructor(container: HTMLElement, event: IEvents){
+        super(container);
+        this.event = event;
+        this.basketList = ensureElement('.basket__list', this.container);
+        this.basketPrice = ensureElement('.basket__price', this.container);
+        this.basketButton = ensureElement('.basket__button', this.container);
+        
+        this.basketButton.addEventListener('click',()=>{
+            this.event.emit('basket:order');
+        });
+    }
+
+    addProducts(data: IProduct[]){
+
+    }
+
+    removeProduct(productId: string){
+
+    }
+
+}
+
+export class OrderSuccess extends Component<OrderResult> {
+    protected event: IEvents;
+    protected button: HTMLButtonElement;
+    protected description: HTMLElement;
+    constructor(container: HTMLElement, event: IEvents){
+        super(container);
+        this.description = ensureElement('.order-success__description', this.container)
+        this.button = ensureElement<HTMLButtonElement>('.order-success__close', this.container);
         this.event = event;
     }
+    
+    setDescription(description: string){
+        this.setText(this.description, description)
+    }
 }
-// class Basket extends Component {
-    
-// }
-// class OrderSuccessModal extends Component {
-    
-// }
