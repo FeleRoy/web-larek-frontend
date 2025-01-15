@@ -234,6 +234,7 @@ type TProductBasket = {
 - setData(productData: IProduct): void - заполняет атрибуты элементов карточки
 - render(): HTMLElement - возвращает заполненную карточку с установленными слушателями
 - getId(): string - возвращает id товара
+- setBasketIndex(index: number): void - устанавливает значение индекса в корзине   
 
 #### Класс Modal
 

@@ -18,7 +18,7 @@ const card1 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
 card1.setData({
     id: '1',
     description: 'Описание',
-    image: 'https://fond-vsem-mirom.ru/wp-content/uploads/2020/06/gk_zdhbg784-1024x682.jpg',
+    image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
     title: 'Заголовок',
     category: 'Роскошь',
     price: 25
@@ -29,7 +29,7 @@ const card2 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
 card2.setData({
     id: '1',
     description: 'Описание',
-    image: 'https://fond-vsem-mirom.ru/wp-content/uploads/2020/06/gk_zdhbg784-1024x682.jpg',
+    image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
     title: 'Заголовок',
     category: 'Роскошь',
     price: 25
