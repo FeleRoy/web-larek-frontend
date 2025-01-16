@@ -190,6 +190,8 @@ type TProductBasket = {
 Так же класс предоставляет набор методов для взаимодействия с этими данными:
 - addProduct(product: IProduct): void - добавление товара в массив 
 - removeProduct(product: IProduct): void - удаления товара из массива
+- containProduct(id: string):boolean - проверяет есть ли элемент в корзине
+- calculateTotal():number - считает цену корзины
 
 ### Слой представления
 Все классы представления отвечают за отображение внутри контейнера (DOM-элемент) передаваемых в них данных.
@@ -276,8 +278,7 @@ type TProductBasket = {
 - addProducts(data: IProduct[]): void — добавляет товары в корзину, используя шаблон 
 - removeProduct(productId: string): void — удаляет товар из корзины по его id
 - setPrice(totalPrice: number):void - устанавливает значение цены корзины
-- calculateTotal():number - считает цену корзины
-- containProduct(id: string):boolean - проверяет есть ли элемент в корзине
+- toggleButton():void - включает и отключает кнопку оформления
 
 #### Класс OrderSuccess
 

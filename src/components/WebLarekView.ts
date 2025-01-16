@@ -82,7 +82,12 @@ export class Card extends Component<IProduct> {
         this.setText(this.cardCategory, productData.category);
         this.setText(this.cardTitle, productData.title);
         this.setImage(this.cardImage, productData.image);
-        this.setText(this.cardPrice, `${productData.price} синапсов`);
+        if (productData.price){
+            this.setText(this.cardPrice, `${productData.price} синапсов`);
+        } else{
+            this.setText(this.cardPrice, `бесконечно синапсов`);
+            this.disableButton();
+        }
         this.setText(this.cardText, productData.description);
         this.cardId = productData.id;
         this.container.dataset.id = this.cardId;
@@ -114,6 +119,7 @@ export class Card extends Component<IProduct> {
     getId() {
         return this.cardId;
     }
+
     disableButton(){
         this.setDisabled(this.cardButton, true);
     }
@@ -237,6 +243,14 @@ export class Basket extends Component<TProductBasket> {
 
     setPrice(totalPrice: number){
         this.setText(this.basketPrice, `${totalPrice} синапсов`)
+    }
+
+    toggleButton(){
+        if(this.basketCounter === 1){
+            this.setDisabled(this.basketButton, true);
+        }else {
+            this.setDisabled(this.basketButton, false);
+        }
     }
 }
 

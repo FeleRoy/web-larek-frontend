@@ -52,6 +52,7 @@ export class BasketModal {
     removeProduct(productId: string) {
         this.items = this.items.filter((item) => item.id !== productId);
         this.total = this.calculateTotal();
+        this.events.emit<{id: string}>('basket:removeitem', {id: productId});
     }
     calculateTotal(){
         return this.items.reduce((acc, current)=>{

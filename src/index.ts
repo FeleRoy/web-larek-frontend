@@ -100,6 +100,7 @@ const api = new AppApi(CDN_URL, API_URL);
 api.getProductList().then((data)=> {
     productsModal.addProducts(data);
     page.render({Catalog: data});
+    console.log(data);
 });
 
 eventsEmitter.on<{id: string}>('product:select', (data)=>{
@@ -125,14 +126,18 @@ eventsEmitter.on('basket:additem', ()=>{
 eventsEmitter.on('basket:open', ()=>{
     basketView.addProducts(basketModal.items);
     basketView.setPrice(basketModal.total);
+    basketView.toggleButton();
     modal.open(basketView.render());
 });
 
 
 eventsEmitter.on<{id: string}>('basket:deleteproduct', (data)=>{
     basketModal.removeProduct(data.id);
-    basketView.removeProduct(data.id);
-    basketView.setPrice(basketModal.total);
-    page.BasketCounter = `${basketModal.items.length}`;
 });
 
+eventsEmitter.on<{id: string}>('basket:removeitem', (data)=>{
+    basketView.removeProduct(data.id);
+    basketView.setPrice(basketModal.total);
+    basketView.toggleButton();
+    page.BasketCounter = `${basketModal.items.length}`;
+});
