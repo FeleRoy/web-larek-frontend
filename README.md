@@ -262,7 +262,8 @@ type TProductBasket = {
 - `constructor(container: HTMLElement, event: IEvents)`
 
 Методы:
-- isValid(): boolean — проверяет, заполнены ли все обязательные поля формы и активирует кнопку
+- setValid(value:boolean) — меняет состояние кнопки
+- setErrors(value:string) - устанавливает текст ошибки
 - clear(): void - очищает содержимое формы и деактивирует кнопку отправки
 
 #### Класс Basket

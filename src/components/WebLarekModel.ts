@@ -27,8 +27,26 @@ export class ContactsData {
     email: string;
     phone: string;
     address: string;
+    formErrors: Contacts;
+    protected events: IEvents;
+    constructor(events: IEvents){
+        this.events = events;
+    }
 
     checkValidation(data: Record<keyof Contacts, string>) {
+        if (!data.address) {
+            this.formErrors.address = "Необхожимо указать адрес"
+        }
+        if (!data.email) {
+            this.formErrors.email = "Необхожимо указать email"
+        }
+        if (!data.phone) {
+            this.formErrors.phone = "Необхожимо указать телефон"
+        }
+        if (!data.payment){
+            this.formErrors.payment = "Выберете способ оплаты"
+        }
+        this.events.emit('formErrors:change', this.formErrors);
 
     }
 }

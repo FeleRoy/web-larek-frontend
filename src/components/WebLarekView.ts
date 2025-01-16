@@ -176,7 +176,7 @@ export class Modal<T> extends Component<T> {
     }
 
 }
-export class Form extends Component<HTMLFormElement> {
+export class Form<T> extends Component<HTMLFormElement> {
     protected event: IEvents;
     protected submitButton: HTMLButtonElement;
     protected errors: HTMLElement;
@@ -186,7 +186,7 @@ export class Form extends Component<HTMLFormElement> {
     protected inputAddress?: HTMLElement;
     protected inputEmail?: HTMLElement;
     protected inputPhone?: HTMLElement;
-    constructor(container: HTMLElement, event: IEvents){
+    constructor(container: HTMLFormElement, event: IEvents){
         super(container);
         this.event = event;
         this.submitButton = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);
@@ -198,14 +198,51 @@ export class Form extends Component<HTMLFormElement> {
         this.inputAddress = this.container.querySelector('input[name=address]');
         this.inputEmail = this.container.querySelector('input[name=email]');
         this.inputPhone = this.container.querySelector('input[name=phone');
+
+        if(this.buttonCash){
+            this.buttonCash.addEventListener('click',()=>{
+                event.emit('order:cash')
+            })
+        }
+        if(this.buttonCard){
+            this.buttonCard.addEventListener('click',()=>{
+                event.emit('order:card')
+            })
+        }
+
+
+        this.container.addEventListener('submit', (e: Event) =>{
+            e.preventDefault();
+            this.event.emit(`${this.container.dataset.name}:submit`)
+        })
+
+        this.container.addEventListener('input', (e: Event) => {
+            const target = e.target as HTMLInputElement;
+            const field = target.name as keyof T;
+            const value = target.value;
+            this.onInputChange(field, value);
+        });
+
     }
 
-    isValid(){
-        
+    protected onInputChange(field: keyof T, value: string) {
+        this.event.emit(`${String(field)}:input`, {
+            field,
+            value
+        });
+    }
+
+    setValid(value:boolean){
+        this.submitButton.disabled = !value;
+    }
+
+    setErrors(value:string){
+        this.setText(this.errors, value);
     }
 
     clear(){
         this.form.reset();
+        this.submitButton.disabled = true;
     }
 
 }

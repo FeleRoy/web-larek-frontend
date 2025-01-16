@@ -2,10 +2,10 @@ import { AppApi } from './components/AppApi';
 import {API_URL, CDN_URL} from "./utils/constants";
 import { EventEmitter } from './components/base/events';
 import { BasketModal, ProductsData} from './components/WebLarekModel';
-import {Basket, Card, Modal, Page} from './components/WebLarekView';
+import {Basket, Card, Form, Modal, OrderSuccess, Page} from './components/WebLarekView';
 import './scss/styles.scss';
 import { cloneTemplate } from './utils/utils';
-import { IProduct } from './types';
+import { Contacts, IProduct } from './types';
 
 const eventsEmitter = new EventEmitter();
 const productsModal = new ProductsData(eventsEmitter);
@@ -25,7 +25,9 @@ const gallery = document.querySelector('.gallery');
 const page = new Page(document.querySelector('.page'), eventsEmitter);
 const modal = new Modal('.modal', eventsEmitter);
 const basketView = new Basket(cloneTemplate(basketTemplate), eventsEmitter);
-
+const orderForm = new Form(cloneTemplate(orderFormTemplate), eventsEmitter);
+const contactsForm = new Form(cloneTemplate(contactsFormTemplate), eventsEmitter);
+const successOrder = new OrderSuccess(cloneTemplate(successTemplate), eventsEmitter);
 //modal.open(card2.render());
 
 const api = new AppApi(CDN_URL, API_URL);
@@ -151,3 +153,14 @@ eventsEmitter.on('modal:open', () => {
 eventsEmitter.on('modal:close', () => {
     page.locked = false;
 });
+
+eventsEmitter.on('basket:order', () => {
+    modal.close();
+    modal.open(orderForm.render());
+});
+
+// eventsEmitter.on('formErrors:change', (errors: Partial<Contacts>) => {
+//     const { email, phone } = errors;
+//     order.valid = !email && !phone;
+//     order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+// });
