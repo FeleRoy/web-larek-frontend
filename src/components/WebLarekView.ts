@@ -215,6 +215,7 @@ export class Basket extends Component<TProductBasket> {
 
     addProducts(data: IProduct[]){
         this.basketList.innerHTML = '';
+        this.basketCounter = 1;
         data.forEach((product)=>{
             const card = new Card(cloneTemplate(this.cardBasketTemplate), this.event);
             card.setData(product);
