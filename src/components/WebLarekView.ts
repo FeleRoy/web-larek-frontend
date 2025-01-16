@@ -67,7 +67,7 @@ export class Card extends Component<IProduct> {
         if(this.cardButton){
         this.cardButton.addEventListener('click', ()=>{
             this.event.emit<{id: string}>('product:tobasket', { id: this.cardId});
-            
+            this.disableButton();
         })
         };
         if(this.cardDeleteButton){
@@ -113,6 +113,9 @@ export class Card extends Component<IProduct> {
 
     getId() {
         return this.cardId;
+    }
+    disableButton(){
+        this.setDisabled(this.cardButton, true);
     }
 }
 export class Modal<T> extends Component<T> {
@@ -223,10 +226,12 @@ export class Basket extends Component<TProductBasket> {
 
     removeProduct(productId: string){
         this.basketList.querySelector(`[data-id="${productId}"]`).remove();
-        this.basketCounter
-        this.basketList.querySelectorAll(".basket__item");
-        
-
+        this.basketCounter = 1;
+        Array.from(this.basketList.querySelectorAll(".basket__item")).forEach((item)=>{
+            const index: HTMLElement = item.querySelector('.basket__item-index');
+            this.setText(index, `${this.basketCounter}`);
+            this.basketCounter++;
+        })
     }
 
     setPrice(totalPrice: number){

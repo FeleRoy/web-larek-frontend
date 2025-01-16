@@ -50,7 +50,7 @@ export class BasketModal {
         this.events.emit('basket:additem');
     }
     removeProduct(productId: string) {
-        this.items = this.items.filter((item) =>{ item.id !== productId})
+        this.items = this.items.filter((item) => item.id !== productId);
         this.total = this.calculateTotal();
     }
     calculateTotal(){
@@ -58,5 +58,7 @@ export class BasketModal {
              return acc + current.price
         }, 0);
     }
-
+    containProduct(id: string){
+        return this.items.some((item)=> item.id === id);
+    }
 }

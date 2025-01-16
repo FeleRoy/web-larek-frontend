@@ -67,7 +67,7 @@ const api = new AppApi(CDN_URL, API_URL);
 //     category: 'Роскошь',
 //     price: 25
 // }, {
-//     id: '1',
+//     id: '2',
 //     description: 'Описание',
 //     image: 'https://fond-vsem-mirom.ru/wp-content/uploads/2020/06/gk_zdhbg784-1024x682.jpg',
 //     title: 'Заголовок',
@@ -98,7 +98,6 @@ const api = new AppApi(CDN_URL, API_URL);
 // })
 
 api.getProductList().then((data)=> {
-    console.log(data);
     productsModal.addProducts(data);
     page.render({Catalog: data});
 });
@@ -107,6 +106,9 @@ eventsEmitter.on<{id: string}>('product:select', (data)=>{
     api.getProductItem(`${data.id}`).then((data)=> {
         const card = new Card(cloneTemplate(cardPreviewTemplate), eventsEmitter);
         card.setData(data);
+        if(basketModal.containProduct(data.id)){
+            card.disableButton();
+        }
         modal.open(card.render());
     });
 });
@@ -114,6 +116,7 @@ eventsEmitter.on<{id: string}>('product:tobasket', (data)=>{
     api.getProductItem(`${data.id}`).then((data)=> {
         basketModal.addProduct(data);
     });
+    
 });
 eventsEmitter.on('basket:additem', ()=>{
     page.BasketCounter = `${basketModal.items.length}`;
@@ -132,3 +135,4 @@ eventsEmitter.on<{id: string}>('basket:deleteproduct', (data)=>{
     basketView.setPrice(basketModal.total);
     page.BasketCounter = `${basketModal.items.length}`;
 });
+

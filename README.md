@@ -239,6 +239,7 @@ type TProductBasket = {
 - render(): HTMLElement - возвращает заполненную карточку с установленными слушателями
 - getId(): string - возвращает id товара
 - setBasketIndex(index: number): void - устанавливает значение индекса в корзине   
+- disableButton():void - отключает кнопку добавления в корзину
 
 #### Класс Modal
 
@@ -276,6 +277,7 @@ type TProductBasket = {
 - removeProduct(productId: string): void — удаляет товар из корзины по его id
 - setPrice(totalPrice: number):void - устанавливает значение цены корзины
 - calculateTotal():number - считает цену корзины
+- containProduct(id: string):boolean - проверяет есть ли элемент в корзине
 
 #### Класс OrderSuccess
 
