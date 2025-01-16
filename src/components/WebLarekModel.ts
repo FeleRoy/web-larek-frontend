@@ -12,6 +12,14 @@ export class ProductsData {
     addProduct(product: IProduct) {
         this.products.push(product)
     }
+    addProducts(products: IProduct[]){
+        products.forEach((product)=>{
+            this.addProduct(product);
+        })
+    }
+    selectProduct(id: string){
+         this.select = id;
+    }
     getProduct(productId: string) {
         return this.products.find(item => item.id === productId)
     }
@@ -30,15 +38,25 @@ export class ContactsData {
 
 export class BasketModal {
     items: IProduct[] = [];
-    total: number;
+    total: number = 0;
+    events: IEvents;
+    constructor(events: IEvents){
+        this.events = events;
+    }
 
     addProduct(product: IProduct) {
         this.items.push(product);
-        this.total += product.price;
+        this.total = this.calculateTotal();
+        this.events.emit('basket:additem');
     }
-    removeProduct(product: IProduct) {
-        this.items = this.items.filter((item) =>{ item.id !== product.id})
-        this.total -= product.price;
+    removeProduct(productId: string) {
+        this.items = this.items.filter((item) =>{ item.id !== productId})
+        this.total = this.calculateTotal();
+    }
+    calculateTotal(){
+        return this.items.reduce((acc, current)=>{
+             return acc + current.price
+        }, 0);
     }
 
 }

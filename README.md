@@ -164,6 +164,8 @@ type TProductBasket = {
 
 Так же класс предоставляет набор методов для взаимодействия с этими данными:
 - addProduct(product: IProduct): void - добавляет один товар в массив 
+- addProducts(products: IProduct[]): void - добавляет массив товаров
+- selectProduct(id: string):void - сохраняет id выбранного товара
 - getProduct(productId: string): IProduct - возвращает товар по `id`
 
 #### Класс ContactsData
@@ -179,9 +181,11 @@ type TProductBasket = {
 - checkValidation(data: Record<keyof Contacts, string>): boolean - проверяет объект с данными покупателя на валидность
 
 #### Класс BasketModal
-Класс отвечает за хранение и логику работы с данными в корзине.
+Класс отвечает за хранение и логику работы с данными в корзине.\
+Конструктор класса принимает инстант брокера событий\
 - items: IProduct[] - массив товаров, находящихся в корзине
 - total: number - сумма покупки
+- events: IEvents - экземпляр класса `EventEmitter` для инициации событий при изменении данных
 
 Так же класс предоставляет набор методов для взаимодействия с этими данными:
 - addProduct(product: IProduct): void - добавление товара в массив 
@@ -270,7 +274,8 @@ type TProductBasket = {
 Методы:
 - addProducts(data: IProduct[]): void — добавляет товары в корзину, используя шаблон 
 - removeProduct(productId: string): void — удаляет товар из корзины по его id
-- render(): void — перерисовывает содержимое модального окна корзины, отображая актуальный список товаров и общую стоимость
+- setPrice(totalPrice: number):void - устанавливает значение цены корзины
+- calculateTotal():number - считает цену корзины
 
 #### Класс OrderSuccess
 
@@ -303,7 +308,7 @@ type TProductBasket = {
 
 *События, возникающие при взаимодействии пользователя с интерфейсом (генерируются классами, отвечающими за представление)*
 - `product:select` - выбор товара для отображения в модальном окне
-- `product:tobasket` - выбор товара для добавления в корзину
+- `product:tobasket` - нажатие на кнопку добавить
 - `basket:open` - нажатие на кнопку корзины
 - `basket:deleteproduct` - нажатие на кнопку удалить товар
 - `basket:order` - нажатие на кнопку оформить

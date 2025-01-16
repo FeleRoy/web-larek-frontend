@@ -2,44 +2,59 @@ import { AppApi } from './components/AppApi';
 import {API_URL, CDN_URL} from "./utils/constants";
 import { EventEmitter } from './components/base/events';
 import { BasketModal, ProductsData} from './components/WebLarekModel';
-import {Card, Modal, Page} from './components/WebLarekView';
+import {Basket, Card, Modal, Page} from './components/WebLarekView';
 import './scss/styles.scss';
 import { cloneTemplate } from './utils/utils';
 import { IProduct } from './types';
 
-const EventsEmit = new EventEmitter();
-const Products = new ProductsData(EventsEmit);
-const Basket = new BasketModal();
+const eventsEmitter = new EventEmitter();
+const productsModal = new ProductsData(eventsEmitter);
+const basketModal = new BasketModal(eventsEmitter);
+
 
 const cardCatalogTemplate = document.querySelector('#card-catalog') as HTMLTemplateElement;
+const cardPreviewTemplate = document.querySelector('#card-preview') as HTMLTemplateElement;
+const cardBasketTemplate = document.querySelector('#card-basket') as HTMLTemplateElement;
+const basketTemplate = document.querySelector('#basket') as HTMLTemplateElement;
+const orderFormTemplate = document.querySelector('#order') as HTMLTemplateElement;
+const contactsFormTemplate = document.querySelector('#contacts') as HTMLTemplateElement;
+const successTemplate = document.querySelector('#success') as HTMLTemplateElement;
+
 const gallery = document.querySelector('.gallery');
 
-const card1 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
-card1.setData({
-    id: '1',
-    description: 'Описание',
-    image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
-    title: 'Заголовок',
-    category: 'Роскошь',
-    price: 25
-});
-gallery.append(card1.render());
+const page = new Page(document.querySelector('.page'), eventsEmitter);
+const modal = new Modal('.modal', eventsEmitter);
+const basketView = new Basket(cloneTemplate(basketTemplate), eventsEmitter);
 
-const card2 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
-card2.setData({
-    id: '1',
-    description: 'Описание',
-    image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
-    title: 'Заголовок',
-    category: 'Роскошь',
-    price: 25
-});
+//modal.open(card2.render());
+
+const api = new AppApi(CDN_URL, API_URL);
+// const card1 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
+// card1.setData({
+//     id: '1',
+//     description: 'Описание',
+//     image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
+//     title: 'Заголовок',
+//     category: 'Роскошь',
+//     price: 25
+// });
+// gallery.append(card1.render());
+
+// const card2 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
+// card2.setData({
+//     id: '1',
+//     description: 'Описание',
+//     image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
+//     title: 'Заголовок',
+//     category: 'Роскошь',
+//     price: 25
+// });
 
 // EventsEmit.on('product:select', ()=>{
 //     console.log('product:select');
 // })
 
-const page = new Page(document.querySelector('.page'), EventsEmit);
+
 
 // page.render({
 //     BasketCounter: '2'
@@ -64,17 +79,6 @@ const page = new Page(document.querySelector('.page'), EventsEmit);
 // })
 
 
-const modal = new Modal('.modal', EventsEmit);
-
-modal.open(card2.render());
-
-const api = new AppApi(CDN_URL, API_URL);
-
-// api.getProductList().then((data)=> {
-//     console.log(data);
-//     page.render({Catalog: data});
-// });
-
 // api.getProductItem("854cef69-976d-4c2a-a18c-2aa45046c390").then((data)=> {
 //     console.log(data);
 // });
@@ -92,3 +96,39 @@ const api = new AppApi(CDN_URL, API_URL);
 // }).then((data)=>{
 //     console.log(data);
 // })
+
+api.getProductList().then((data)=> {
+    console.log(data);
+    productsModal.addProducts(data);
+    page.render({Catalog: data});
+});
+
+eventsEmitter.on<{id: string}>('product:select', (data)=>{
+    api.getProductItem(`${data.id}`).then((data)=> {
+        const card = new Card(cloneTemplate(cardPreviewTemplate), eventsEmitter);
+        card.setData(data);
+        modal.open(card.render());
+    });
+});
+eventsEmitter.on<{id: string}>('product:tobasket', (data)=>{
+    api.getProductItem(`${data.id}`).then((data)=> {
+        basketModal.addProduct(data);
+    });
+});
+eventsEmitter.on('basket:additem', ()=>{
+    page.BasketCounter = `${basketModal.items.length}`;
+});
+
+eventsEmitter.on('basket:open', ()=>{
+    basketView.addProducts(basketModal.items);
+    basketView.setPrice(basketModal.total);
+    modal.open(basketView.render());
+});
+
+
+eventsEmitter.on<{id: string}>('basket:deleteproduct', (data)=>{
+    basketModal.removeProduct(data.id);
+    basketView.removeProduct(data.id);
+    basketView.setPrice(basketModal.total);
+    page.BasketCounter = `${basketModal.items.length}`;
+});

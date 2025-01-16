@@ -17,6 +17,9 @@ export class Page extends Component<IPage> {
         this.basketCounter = ensureElement('.header__basket-counter', this.container);
         this.gallery = ensureElement('.gallery', this.container);
         this.cardCatalogTemplate = ensureElement('#card-catalog', this.container) as HTMLTemplateElement;
+        this.basket.addEventListener('click', ()=>{
+            this.event.emit('basket:open');
+        });
     }
 
     set Catalog(products: IProduct[]){
@@ -40,6 +43,8 @@ export class Card extends Component<IProduct> {
     protected cardText?: HTMLElement;
     protected cardId: string;
     protected cardBasketIndex?: HTMLElement;
+    protected cardButton?: HTMLButtonElement;
+    protected cardDeleteButton?: HTMLButtonElement;
     protected event: IEvents;
 
     constructor(container: HTMLElement, event: IEvents) {
@@ -50,11 +55,27 @@ export class Card extends Component<IProduct> {
         this.cardPrice = ensureElement('.card__price', this.container);
         this.cardText = container.querySelector('.card__text');
         this.cardBasketIndex = container.querySelector('.basket__item-index');
+        this.cardButton = container.querySelector('.basket__item-add');
+        this.cardDeleteButton = container.querySelector('.basket__item-delete');
         this.event = event;
-        this.container.addEventListener('click',()=>{
-            this.event.emit('product:select');
-        });
-
+        if (container.classList.contains('gallery__item')){
+            this.container.addEventListener('click',()=>{
+                this.event.emit<{id: string}>('product:select', { id: this.cardId});
+            });
+        };
+        
+        if(this.cardButton){
+        this.cardButton.addEventListener('click', ()=>{
+            this.event.emit<{id: string}>('product:tobasket', { id: this.cardId});
+            
+        })
+        };
+        if(this.cardDeleteButton){
+            this.cardDeleteButton.addEventListener('click', ()=>{
+                this.event.emit<{id: string}>('basket:deleteproduct', { id: this.cardId});
+                
+            });
+        }
     }
 
     setData(productData: IProduct) {
@@ -64,7 +85,7 @@ export class Card extends Component<IProduct> {
         this.setText(this.cardPrice, `${productData.price} синапсов`);
         this.setText(this.cardText, productData.description);
         this.cardId = productData.id;
-        this.container.setAttribute('id', this.cardId);
+        this.container.dataset.id = this.cardId;
         if(this.cardCategory){
             switch(productData.category){
                 case "софт-скил":
@@ -190,6 +211,7 @@ export class Basket extends Component<TProductBasket> {
     }
 
     addProducts(data: IProduct[]){
+        this.basketList.innerHTML = '';
         data.forEach((product)=>{
             const card = new Card(cloneTemplate(this.cardBasketTemplate), this.event);
             card.setData(product);
@@ -200,9 +222,16 @@ export class Basket extends Component<TProductBasket> {
     }
 
     removeProduct(productId: string){
-        this.basketList.querySelector(`#${productId}`).remove();
+        this.basketList.querySelector(`[data-id="${productId}"]`).remove();
+        this.basketCounter
+        this.basketList.querySelectorAll(".basket__item");
+        
+
     }
 
+    setPrice(totalPrice: number){
+        this.setText(this.basketPrice, `${totalPrice} синапсов`)
+    }
 }
 
 export class OrderSuccess extends Component<OrderResult> {
