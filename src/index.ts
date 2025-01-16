@@ -141,3 +141,13 @@ eventsEmitter.on<{id: string}>('basket:removeitem', (data)=>{
     basketView.toggleButton();
     page.BasketCounter = `${basketModal.items.length}`;
 });
+
+// Блокируем прокрутку страницы если открыта модалка
+eventsEmitter.on('modal:open', () => {
+    page.locked = true;
+});
+
+// ... и разблокируем
+eventsEmitter.on('modal:close', () => {
+    page.locked = false;
+});

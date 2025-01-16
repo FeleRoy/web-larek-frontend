@@ -159,13 +159,11 @@ type TProductBasket = {
 В полях класса хранятся следующие данные:
 
 - _products: IProduct[] - массив объектов товаров
-- _select: string | null - id товара, выбранного для просмотра описания или для добавления в корзину 
-- events: IEvents - экземпляр класса `EventEmitter` для инициации событий при изменении данных
+- _events: IEvents - экземпляр класса `EventEmitter` для инициации событий при изменении данных
 
 Так же класс предоставляет набор методов для взаимодействия с этими данными:
 - addProduct(product: IProduct): void - добавляет один товар в массив 
 - addProducts(products: IProduct[]): void - добавляет массив товаров
-- selectProduct(id: string):void - сохраняет id выбранного товара
 - getProduct(productId: string): IProduct - возвращает товар по `id`
 
 #### Класс ContactsData
@@ -226,6 +224,7 @@ type TProductBasket = {
 
 - set Сatalog(products: IProduct[]): void — отображает карточки товаров
 - set BasketCounter(newBasketCounter: string): void — устанавливает значение счётчика товаров в корзине
+- set locked(valude:boolean):void - блокирует прокрутку страницы
 
 
 #### Класс Card
@@ -304,8 +303,6 @@ type TProductBasket = {
 
 *Список всех событий, которые могут генерироваться в системе:*\
 *События изменения данных (генерируются классами моделями данных)*
-- `product:selected` - изменение открываемой в модальном окне карточки
-- `product:previewClear` - необходима очистка данных выбранной для показа в модальном окне карточки товара
 - `basket:additem` - добавление товара в корзину
 - `basket:removeitem` - удаление товара из корзины
 
@@ -324,3 +321,5 @@ type TProductBasket = {
 - `contacts:validation` - событие, сообщающее о необходимости валидации формы контактных данных
 - `contacts:submit` - нажатие на кнопку оплатить
 - `success:close` - нажатие на кнопку за новыми покупками
+- `modal:open` - открылось модальное окно
+- `modal:close` - закрылось модальное окно

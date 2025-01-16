@@ -8,6 +8,7 @@ export class Page extends Component<IPage> {
     protected basket: HTMLElement;
     protected gallery: HTMLElement;
     protected cardCatalogTemplate: HTMLTemplateElement;
+    protected wrapper: HTMLElement;
     protected event: IEvents;
 
     constructor(container: HTMLElement, event: IEvents) {
@@ -17,6 +18,7 @@ export class Page extends Component<IPage> {
         this.basketCounter = ensureElement('.header__basket-counter', this.container);
         this.gallery = ensureElement('.gallery', this.container);
         this.cardCatalogTemplate = ensureElement('#card-catalog', this.container) as HTMLTemplateElement;
+        this.wrapper = ensureElement<HTMLElement>('.page__wrapper');
         this.basket.addEventListener('click', ()=>{
             this.event.emit('basket:open');
         });
@@ -34,6 +36,13 @@ export class Page extends Component<IPage> {
         this.setText(this.basketCounter, newBasketCounter);
     }
 
+    set locked(value: boolean) {
+        if (value) {
+            this.wrapper.classList.add('page__wrapper_locked');
+        } else {
+            this.wrapper.classList.remove('page__wrapper_locked');
+        }
+    }
 }
 export class Card extends Component<IProduct> {
     protected cardCategory?: HTMLElement;
@@ -155,6 +164,7 @@ export class Modal<T> extends Component<T> {
         });
         document.addEventListener('keydown', this.closeByEsc);
         this.container.addEventListener('click', this.closeByOverlay);
+        this.event.emit('modal:open');
     }
 
     close(){
@@ -162,6 +172,7 @@ export class Modal<T> extends Component<T> {
         this.modalContainer.innerHTML = '';
         document.removeEventListener('keydown', this.closeByEsc);
         this.container.removeEventListener('click', this.closeByOverlay);
+        this.event.emit('modal:close');
     }
 
 }

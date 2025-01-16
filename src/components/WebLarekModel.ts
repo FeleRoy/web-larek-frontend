@@ -3,8 +3,7 @@ import { IEvents } from "./base/events";
 
 export class ProductsData {
     protected products: IProduct[] = [];
-    protected select: string | null;
-    events: IEvents;
+    protected events: IEvents;
     constructor(events: IEvents){
         this.events = events;
     }
@@ -17,9 +16,7 @@ export class ProductsData {
             this.addProduct(product);
         })
     }
-    selectProduct(id: string){
-         this.select = id;
-    }
+
     getProduct(productId: string) {
         return this.products.find(item => item.id === productId)
     }
