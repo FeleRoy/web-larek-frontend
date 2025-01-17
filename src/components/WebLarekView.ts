@@ -291,7 +291,7 @@ export class Form<T> extends Component<HTMLFormElement> {
 	}
 
 	toggleSubmitButton(isValid: boolean) {
-		this.submitButton.disabled = !isValid;
+		this.setDisabled(this.submitButton, !isValid);
 	}
 
 	toggleAltButton(value: string) {
@@ -314,7 +314,7 @@ export class Form<T> extends Component<HTMLFormElement> {
 
 	clear() {
 		this.form.reset();
-		this.submitButton.disabled = true;
+		this.setDisabled(this.submitButton, true);
 	}
 }
 
