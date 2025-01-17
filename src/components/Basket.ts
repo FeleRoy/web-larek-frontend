@@ -54,10 +54,6 @@ export class Basket extends Component<TProductBasket> {
 	}
 
 	toggleButton() {
-		if (this.basketCounter === 1) {
-			this.setDisabled(this.basketButton, true);
-		} else {
-			this.setDisabled(this.basketButton, false);
-		}
-	}
+		this.setDisabled(this.basketButton, this.basketCounter === 1);
+    } 
 }
