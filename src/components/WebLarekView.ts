@@ -179,72 +179,110 @@ export class Modal<T> extends Component<T> {
 export class Form<T> extends Component<HTMLFormElement> {
     protected event: IEvents;
     protected submitButton: HTMLButtonElement;
-    protected errors: HTMLElement;
+    protected errorElement: HTMLElement;
     protected form: HTMLFormElement;
     protected buttonCard?: HTMLButtonElement;
     protected buttonCash?: HTMLButtonElement;
-    protected inputAddress?: HTMLElement;
-    protected inputEmail?: HTMLElement;
-    protected inputPhone?: HTMLElement;
+    protected inputAddress?: HTMLInputElement;
+    protected inputEmail?: HTMLInputElement;
+    protected inputPhone?: HTMLInputElement;
     constructor(container: HTMLFormElement, event: IEvents){
         super(container);
         this.event = event;
         this.submitButton = ensureElement<HTMLButtonElement>('button[type=submit]', this.container);
-        this.errors = ensureElement('.form__errors', this.container);
+        this.errorElement = ensureElement('.form__errors', this.container);
         this.form = this.container as HTMLFormElement;
 
         this.buttonCard = this.container.querySelector('button[name=card]');
         this.buttonCash = this.container.querySelector('button[name=cash]');
         this.inputAddress = this.container.querySelector('input[name=address]');
         this.inputEmail = this.container.querySelector('input[name=email]');
-        this.inputPhone = this.container.querySelector('input[name=phone');
+        this.inputPhone = this.container.querySelector('input[name=phone]');
 
         if(this.buttonCash){
             this.buttonCash.addEventListener('click',()=>{
-                event.emit('order:cash')
+                this.toggleAltButton('cash');
+                event.emit('order:cash', {value: this.inputAddress.value});
             })
         }
         if(this.buttonCard){
             this.buttonCard.addEventListener('click',()=>{
-                event.emit('order:card')
+                this.toggleAltButton('card');
+                event.emit('order:card', {value: this.inputAddress.value});
             })
         }
 
-
         this.container.addEventListener('submit', (e: Event) =>{
             e.preventDefault();
-            this.event.emit(`${this.container.dataset.name}:submit`)
-        })
-
-        this.container.addEventListener('input', (e: Event) => {
-            const target = e.target as HTMLInputElement;
-            const field = target.name as keyof T;
-            const value = target.value;
-            this.onInputChange(field, value);
+            this.event.emit(`${this.container.dataset.name}:submit`);
         });
 
-    }
-
-    protected onInputChange(field: keyof T, value: string) {
-        this.event.emit(`${String(field)}:input`, {
-            field,
-            value
+        this.event.on("form:step1-validation", (data: { errors: Record<string, string | null>; isValid: boolean }) => {
+            this.showValidationErrors(data.errors);
+            this.toggleSubmitButton(data.isValid);
+          });
+      
+        this.event.on("form:step2-validation", (data: { errors: Record<string, string | null>; isValid: boolean }) => {
+            this.showValidationErrors(data.errors);
+            this.toggleSubmitButton(data.isValid);
         });
+
+        if(this.inputAddress){
+            this.inputAddress.addEventListener("input", ()=>{
+                this.event.emit(`address:input`, {value: this.inputAddress.value});
+            });
+        }
+        if(this.inputEmail){
+            this.inputEmail.addEventListener("input", ()=>{
+                this.event.emit(`contacts:input`, {email: this.inputEmail.value, phone: this.inputPhone.value});
+            });
+            this.inputPhone.addEventListener("input", ()=>{
+                this.event.emit(`contacts:input`, {email: this.inputEmail.value, phone: this.inputPhone.value});
+            });
+        }
+
     }
 
-    setValid(value:boolean){
-        this.submitButton.disabled = !value;
+    setContactsListeners(inputElement: HTMLInputElement){
+        if(inputElement){
+            inputElement.addEventListener("input", ()=>{
+                this.event.emit(`contacts:input`, {email: this.inputEmail.value, phone: this.inputPhone.value});
+            });
+        }
     }
 
-    setErrors(value:string){
-        this.setText(this.errors, value);
+    showValidationErrors(errors: Record<string, string | null>) {
+        const firstError = Object.values(errors).find((error) => error !== null);
+        this.errorElement.textContent = firstError || "";
+    }
+
+    toggleSubmitButton(isValid: boolean) {
+        this.submitButton.disabled = !isValid;
+    }
+
+    toggleAltButton(value: string){
+        if (value === "card"){
+            this.buttonCard.classList.add("button_alt-active");
+            this.buttonCash.classList.remove("button_alt-active");
+        }else {
+            this.buttonCard.classList.remove("button_alt-active");
+            this.buttonCash.classList.add("button_alt-active");
+        }
+    }
+
+    getAddressValue(){
+        return this.inputAddress.value;
+    }
+
+    getContactsValue(){
+        return {phone: this.inputPhone.value, email: this.inputEmail.value};
     }
 
     clear(){
         this.form.reset();
         this.submitButton.disabled = true;
     }
-
+    
 }
 
 export class Basket extends Component<TProductBasket> {
@@ -311,6 +349,9 @@ export class OrderSuccess extends Component<OrderResult> {
         this.description = ensureElement('.order-success__description', this.container)
         this.button = ensureElement<HTMLButtonElement>('.order-success__close', this.container);
         this.event = event;
+        this.button.addEventListener('click', ()=>{
+            this.event.emit('success:close');
+        });
     }
     
     setDescription(description: string){

@@ -1,7 +1,7 @@
 import { AppApi } from './components/AppApi';
 import {API_URL, CDN_URL} from "./utils/constants";
 import { EventEmitter } from './components/base/events';
-import { BasketModal, ProductsData} from './components/WebLarekModel';
+import { BasketModal, ContactsData, ProductsData} from './components/WebLarekModel';
 import {Basket, Card, Form, Modal, OrderSuccess, Page} from './components/WebLarekView';
 import './scss/styles.scss';
 import { cloneTemplate } from './utils/utils';
@@ -10,17 +10,13 @@ import { Contacts, IProduct } from './types';
 const eventsEmitter = new EventEmitter();
 const productsModal = new ProductsData(eventsEmitter);
 const basketModal = new BasketModal(eventsEmitter);
+const contactsModal = new ContactsData(eventsEmitter);
 
-
-const cardCatalogTemplate = document.querySelector('#card-catalog') as HTMLTemplateElement;
 const cardPreviewTemplate = document.querySelector('#card-preview') as HTMLTemplateElement;
-const cardBasketTemplate = document.querySelector('#card-basket') as HTMLTemplateElement;
 const basketTemplate = document.querySelector('#basket') as HTMLTemplateElement;
 const orderFormTemplate = document.querySelector('#order') as HTMLTemplateElement;
 const contactsFormTemplate = document.querySelector('#contacts') as HTMLTemplateElement;
 const successTemplate = document.querySelector('#success') as HTMLTemplateElement;
-
-const gallery = document.querySelector('.gallery');
 
 const page = new Page(document.querySelector('.page'), eventsEmitter);
 const modal = new Modal('.modal', eventsEmitter);
@@ -28,81 +24,12 @@ const basketView = new Basket(cloneTemplate(basketTemplate), eventsEmitter);
 const orderForm = new Form(cloneTemplate(orderFormTemplate), eventsEmitter);
 const contactsForm = new Form(cloneTemplate(contactsFormTemplate), eventsEmitter);
 const successOrder = new OrderSuccess(cloneTemplate(successTemplate), eventsEmitter);
-//modal.open(card2.render());
 
 const api = new AppApi(CDN_URL, API_URL);
-// const card1 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
-// card1.setData({
-//     id: '1',
-//     description: 'Описание',
-//     image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
-//     title: 'Заголовок',
-//     category: 'Роскошь',
-//     price: 25
-// });
-// gallery.append(card1.render());
-
-// const card2 = new Card(cloneTemplate(cardCatalogTemplate), EventsEmit);
-// card2.setData({
-//     id: '1',
-//     description: 'Описание',
-//     image: 'https://sun9-63.userapi.com/impg/RxggABMm6CPpZ6wEHSJzlypej9sGYFANtvxEPg/wYyRzdBSR2s.jpg?size=1620x2160&quality=95&sign=61c577682174b17284c4dc70e0439945&type=album',
-//     title: 'Заголовок',
-//     category: 'Роскошь',
-//     price: 25
-// });
-
-// EventsEmit.on('product:select', ()=>{
-//     console.log('product:select');
-// })
-
-
-
-// page.render({
-//     BasketCounter: '2'
-// })
-// const catalog1 = [{
-//     id: '1',
-//     description: 'Описание',
-//     image: 'https://fond-vsem-mirom.ru/wp-content/uploads/2020/06/gk_zdhbg784-1024x682.jpg',
-//     title: 'Заголовок',
-//     category: 'Роскошь',
-//     price: 25
-// }, {
-//     id: '2',
-//     description: 'Описание',
-//     image: 'https://fond-vsem-mirom.ru/wp-content/uploads/2020/06/gk_zdhbg784-1024x682.jpg',
-//     title: 'Заголовок',
-//     category: 'Роскошь',
-//     price: 25
-// }]
-// page.render({
-//     Catalog: catalog1
-// })
-
-
-// api.getProductItem("854cef69-976d-4c2a-a18c-2aa45046c390").then((data)=> {
-//     console.log(data);
-// });
-
-// api.orderProducts({
-//     "payment": "online",
-//     "email": "test@test.ru",
-//     "phone": "+71234567890",
-//     "address": "Spb Vosstania 1",
-//     "total": 2200,
-//     "items": [
-//         "854cef69-976d-4c2a-a18c-2aa45046c390",
-//         "c101ab44-ed99-4a54-990d-47aa2bb4e7d9"
-//     ]
-// }).then((data)=>{
-//     console.log(data);
-// })
 
 api.getProductList().then((data)=> {
     productsModal.addProducts(data);
     page.render({Catalog: data});
-    console.log(data);
 });
 
 eventsEmitter.on<{id: string}>('product:select', (data)=>{
@@ -121,7 +48,7 @@ eventsEmitter.on<{id: string}>('product:tobasket', (data)=>{
     });
     
 });
-eventsEmitter.on('basket:additem', ()=>{
+eventsEmitter.on('basket:change', ()=>{
     page.BasketCounter = `${basketModal.items.length}`;
 });
 
@@ -159,8 +86,53 @@ eventsEmitter.on('basket:order', () => {
     modal.open(orderForm.render());
 });
 
-// eventsEmitter.on('formErrors:change', (errors: Partial<Contacts>) => {
-//     const { email, phone } = errors;
-//     order.valid = !email && !phone;
-//     order.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
-// });
+eventsEmitter.on<{value: string}>('order:card', (data) => {
+    contactsModal.payment = "card";
+    contactsModal.validateStep1({address: data.value});
+});
+
+eventsEmitter.on<{value: string}>('order:cash', (data) => {
+    contactsModal.payment = "cash";
+    contactsModal.validateStep1({address: data.value});
+});
+
+eventsEmitter.on<{value: string}>('address:input', (data) => {
+    contactsModal.validateStep1({address: data.value});
+});
+
+eventsEmitter.on('order:submit', () => {
+    contactsModal.address = orderForm.getAddressValue();
+    modal.close();
+    modal.open(contactsForm.render());
+});
+
+eventsEmitter.on<{phone: string, email: string}>('contacts:input', (data) => {
+    contactsModal.validateStep2({phone: data.phone, email: data.email});
+});
+
+eventsEmitter.on('contacts:submit', () => {
+    const data = contactsForm.getContactsValue();
+    contactsModal.phone = data.phone;
+    contactsModal.email = data.email;
+    api.orderProducts({
+        "payment": contactsModal.payment,
+        "email": contactsModal.email,
+        "phone": contactsModal.phone,
+        "address": contactsModal.address,
+        "total": basketModal.total,
+        "items": basketModal.getIdBasketItems()
+    }).then((data)=>{
+        successOrder.setDescription(`списано ${data.total} синапсов`);
+        orderForm.clear();
+        contactsForm.clear();
+        basketModal.clearBasket();
+        modal.close();
+        modal.open(successOrder.render());
+    }).catch((err)=>{
+        console.log(`Ошибка покупки: ${err}`);
+    });
+});
+
+eventsEmitter.on('success:close', ()=>{
+    modal.close();
+})

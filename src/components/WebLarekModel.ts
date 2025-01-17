@@ -23,38 +23,64 @@ export class ProductsData {
 }
 
 export class ContactsData {
-    payment: string;
-    email: string;
-    phone: string;
-    address: string;
+    payment: string = "";
+    email: string = "";
+    phone: string = "";
+    address: string = "";
     formErrors: Contacts;
     protected events: IEvents;
     constructor(events: IEvents){
         this.events = events;
     }
-
-    checkValidation(data: Record<keyof Contacts, string>) {
-        if (!data.address) {
-            this.formErrors.address = "Необхожимо указать адрес"
-        }
-        if (!data.email) {
-            this.formErrors.email = "Необхожимо указать email"
-        }
-        if (!data.phone) {
-            this.formErrors.phone = "Необхожимо указать телефон"
-        }
-        if (!data.payment){
-            this.formErrors.payment = "Выберете способ оплаты"
-        }
-        this.events.emit('formErrors:change', this.formErrors);
-
+      
+    validateEmail = (email: string): string | null => {
+        if (email === "") return "Поле email обязательно";
+        return null;
+    }  
+      
+    validatePhone = (phone: string): string | null => {
+        if (phone === "") return "Введите свой номер телефона";
+        return null;
     }
+        
+    validateAddress = (address: string): string | null => {
+            if (address === "") return "Введите адрес";
+            return null;
+    }
+
+    validatePayment = (payment: string): string | null => {
+            if (payment === "") return "Выберете способ оплаты";
+            return null;
+    }
+    
+    validateStep1(data: { address: string}) {
+        const errors = {
+          payment: this.validatePayment(this.payment), 
+          address: this.validateAddress(data.address),
+        }
+    
+        const isValid = Object.values(errors).every((error) => error === null);
+    
+        this.events.emit("form:step1-validation", { errors, isValid });
+    }
+    validateStep2(data: { phone: string; email: string }) {
+        const errors = {
+          phone: this.validatePhone(data.phone),
+          email: this.validateEmail(data.email),
+        }
+    
+        const isValid = Object.values(errors).every((error) => error === null);
+    
+        this.events.emit("form:step2-validation", { errors, isValid });
+    }
+      
 }
 
 export class BasketModal {
     items: IProduct[] = [];
     total: number = 0;
-    events: IEvents;
+    protected IdArray:string[] = [];
+    protected events: IEvents;
     constructor(events: IEvents){
         this.events = events;
     }
@@ -62,7 +88,7 @@ export class BasketModal {
     addProduct(product: IProduct) {
         this.items.push(product);
         this.total = this.calculateTotal();
-        this.events.emit('basket:additem');
+        this.events.emit('basket:change');
     }
     removeProduct(productId: string) {
         this.items = this.items.filter((item) => item.id !== productId);
@@ -76,5 +102,17 @@ export class BasketModal {
     }
     containProduct(id: string){
         return this.items.some((item)=> item.id === id);
+    }
+
+    getIdBasketItems(){
+        this.items.forEach((item)=>{
+            this.IdArray.push(item.id);
+        }) 
+        return this.IdArray;
+    }
+
+    clearBasket(){
+        this.items = [];
+        this.events.emit('basket:change');
     }
 }
