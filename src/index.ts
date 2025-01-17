@@ -8,7 +8,6 @@ import {
 } from './components/WebLarekModel';
 import './scss/styles.scss';
 import { cloneTemplate } from './utils/utils';
-import { Contacts, IProduct } from './types';
 import { Page } from './components/Page';
 import { Modal } from './components/Modal';
 import { Basket } from './components/Basket';
