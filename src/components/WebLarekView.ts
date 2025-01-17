@@ -53,9 +53,9 @@ export class Page extends Component<IPage> {
 
 	set locked(value: boolean) {
 		if (value) {
-			this.wrapper.classList.add('page__wrapper_locked');
+			this.toggleClass(this.wrapper, 'page__wrapper_locked', true);
 		} else {
-			this.wrapper.classList.remove('page__wrapper_locked');
+			this.toggleClass(this.wrapper, 'page__wrapper_locked', false);
 		}
 	}
 }
@@ -70,6 +70,13 @@ export class Card extends Component<IProduct> {
 	protected cardButton?: HTMLButtonElement;
 	protected cardDeleteButton?: HTMLButtonElement;
 	protected event: IEvents;
+	protected _categoryColor = <Record<string, string>> { // описания категории
+		"софт-скил": "soft",
+		"другое": "other",
+		"дополнительное": "additional",
+		"кнопка": "button",
+		"хард-скил": "hard"
+	  }
 
 	constructor(container: HTMLElement, event: IEvents) {
 		super(container);
@@ -119,23 +126,7 @@ export class Card extends Component<IProduct> {
 		this.cardId = productData.id;
 		this.container.dataset.id = this.cardId;
 		if (this.cardCategory) {
-			switch (productData.category) {
-				case 'софт-скил':
-					this.cardCategory.classList.add('card__category_soft');
-					break;
-				case 'другое':
-					this.cardCategory.classList.add('card__category_other');
-					break;
-				case 'дополнительное':
-					this.cardCategory.classList.add('card__category_additional');
-					break;
-				case 'кнопка':
-					this.cardCategory.classList.add('card__category_button');
-					break;
-				case 'хард-скил':
-					this.cardCategory.classList.add('card__category_hard');
-					break;
-			}
+			this.toggleClass(this.cardCategory, `card__category_${this._categoryColor[productData.category]}`, true)
 		}
 	}
 
@@ -179,14 +170,14 @@ export class Modal<T> extends Component<T> {
 
 	open(content: HTMLElement) {
 		this.modalContainer.append(content);
-		this.container.classList.add('modal_active');
+		this.toggleClass(this.container, 'modal_active', true);
 		document.addEventListener('keydown', this.closeByEsc);
 		this.container.addEventListener('click', this.closeByOverlay);
 		this.event.emit('modal:open');
 	}
 
 	close() {
-		this.container.classList.remove('modal_active');
+		this.toggleClass(this.container, 'modal_active', false);
 		this.modalContainer.innerHTML = '';
 		document.removeEventListener('keydown', this.closeByEsc);
 		this.container.removeEventListener('click', this.closeByOverlay);
@@ -296,11 +287,12 @@ export class Form<T> extends Component<HTMLFormElement> {
 
 	toggleAltButton(value: string) {
 		if (value === 'card') {
-			this.buttonCard.classList.add('button_alt-active');
-			this.buttonCash.classList.remove('button_alt-active');
+			this.toggleClass(this.buttonCard, 'button_alt-active', true);
+			this.toggleClass(this.buttonCash, 'button_alt-active', false);
+			
 		} else {
-			this.buttonCard.classList.remove('button_alt-active');
-			this.buttonCash.classList.add('button_alt-active');
+			this.toggleClass(this.buttonCard, 'button_alt-active', false);
+			this.toggleClass(this.buttonCash, 'button_alt-active', true);
 		}
 	}
 
