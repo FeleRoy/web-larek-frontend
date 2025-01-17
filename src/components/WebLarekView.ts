@@ -218,7 +218,7 @@ export class Form<T> extends Component<HTMLFormElement> {
 		this.inputAddress = this.container.querySelector('input[name=address]');
 		this.inputEmail = this.container.querySelector('input[name=email]');
 		this.inputPhone = this.container.querySelector('input[name=phone]');
-
+		
 		if (this.buttonCash) {
 			this.buttonCash.addEventListener('click', () => {
 				this.toggleAltButton('cash');
@@ -287,7 +287,7 @@ export class Form<T> extends Component<HTMLFormElement> {
 
 	showValidationErrors(errors: Record<string, string | null>) {
 		const firstError = Object.values(errors).find((error) => error !== null);
-		this.errorElement.textContent = firstError || '';
+		this.setText(this.errorElement, firstError || '');
 	}
 
 	toggleSubmitButton(isValid: boolean) {
