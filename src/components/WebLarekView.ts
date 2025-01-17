@@ -161,6 +161,9 @@ export class Modal<T> extends Component<T> {
 		this.event = event;
 		this.buttonClose = ensureElement('.modal__close', this.container);
 		this.modalContainer = ensureElement('.modal__content', this.container);
+		this.buttonClose.addEventListener('click', () => {
+			this.close();
+		});
 	}
 
 	protected closeByEsc = (evt: KeyboardEvent) => {
@@ -177,9 +180,6 @@ export class Modal<T> extends Component<T> {
 	open(content: HTMLElement) {
 		this.modalContainer.append(content);
 		this.container.classList.add('modal_active');
-		this.buttonClose.addEventListener('click', () => {
-			this.close();
-		});
 		document.addEventListener('keydown', this.closeByEsc);
 		this.container.addEventListener('click', this.closeByOverlay);
 		this.event.emit('modal:open');
