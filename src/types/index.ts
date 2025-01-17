@@ -15,8 +15,8 @@ export interface Contacts {
 }
 
 export interface IPage {
-	BasketCounter: string;
-	Catalog: IProduct[];
+	basketCounter: string;
+	catalog: IProduct[];
 }
 
 export type TProductCard = Pick<

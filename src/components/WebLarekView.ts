@@ -10,7 +10,7 @@ import { Component } from './base/Component';
 import { IEvents } from './base/events';
 
 export class Page extends Component<IPage> {
-	protected basketCounter: HTMLElement;
+	protected basketCounterElement: HTMLElement;
 	protected basket: HTMLElement;
 	protected gallery: HTMLElement;
 	protected cardCatalogTemplate: HTMLTemplateElement;
@@ -21,7 +21,7 @@ export class Page extends Component<IPage> {
 		super(container);
 		this.event = event;
 		this.basket = ensureElement('.header__basket', this.container);
-		this.basketCounter = ensureElement(
+		this.basketCounterElement = ensureElement(
 			'.header__basket-counter',
 			this.container
 		);
@@ -36,7 +36,7 @@ export class Page extends Component<IPage> {
 		});
 	}
 
-	set Catalog(products: IProduct[]) {
+	set catalog(products: IProduct[]) {
 		products.forEach((product) => {
 			const card = new Card(
 				cloneTemplate(this.cardCatalogTemplate),
@@ -47,8 +47,8 @@ export class Page extends Component<IPage> {
 		});
 	}
 
-	set BasketCounter(newBasketCounter: string) {
-		this.setText(this.basketCounter, newBasketCounter);
+	set basketCounter(newBasketCounter: string) {
+		this.setText(this.basketCounterElement, newBasketCounter);
 	}
 
 	set locked(value: boolean) {

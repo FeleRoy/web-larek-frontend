@@ -54,7 +54,7 @@ const api = new AppApi(CDN_URL, API_URL);
 
 api.getProductList().then((data) => {
 	productsModal.addProducts(data);
-	page.render({ Catalog: data });
+	page.render({ catalog: data });
 }).catch((err) => {
 	console.log(`Ошибка : ${err}`);
 });
@@ -79,7 +79,7 @@ eventsEmitter.on<{ id: string }>('product:tobasket', (data) => {
 	});
 });
 eventsEmitter.on('basket:change', () => {
-	page.BasketCounter = `${basketModal.items.length}`;
+	page.basketCounter = `${basketModal.items.length}`;
 });
 
 eventsEmitter.on('basket:open', () => {
@@ -97,7 +97,7 @@ eventsEmitter.on<{ id: string }>('basket:removeitem', (data) => {
 	basketView.removeProduct(data.id);
 	basketView.setPrice(basketModal.total);
 	basketView.toggleButton();
-	page.BasketCounter = `${basketModal.items.length}`;
+	page.basketCounter = `${basketModal.items.length}`;
 });
 
 // Блокируем прокрутку страницы если открыта модалка
