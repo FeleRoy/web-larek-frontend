@@ -6,17 +6,15 @@ import {
 	ContactsData,
 	ProductsData,
 } from './components/WebLarekModel';
-import {
-	Basket,
-	Card,
-	Form,
-	Modal,
-	OrderSuccess,
-	Page,
-} from './components/WebLarekView';
 import './scss/styles.scss';
 import { cloneTemplate } from './utils/utils';
 import { Contacts, IProduct } from './types';
+import { Page } from './components/Page';
+import { Modal } from './components/Modal';
+import { Basket } from './components/Basket';
+import { Form } from './components/Form';
+import { OrderSuccess } from './components/OrderSuccess';
+import { Card } from './components/Card';
 
 const eventsEmitter = new EventEmitter();
 const productsModal = new ProductsData(eventsEmitter);
@@ -132,6 +130,7 @@ eventsEmitter.on<{ value: string }>('address:input', (data) => {
 eventsEmitter.on('order:submit', () => {
 	contactsModal.address = orderForm.getAddressValue();
 	modal.close();
+	contactsForm.toggleSubmitButton(false);
 	modal.open(contactsForm.render());
 });
 
