@@ -55,6 +55,8 @@ const api = new AppApi(CDN_URL, API_URL);
 api.getProductList().then((data) => {
 	productsModal.addProducts(data);
 	page.render({ Catalog: data });
+}).catch((err) => {
+	console.log(`Ошибка : ${err}`);
 });
 
 eventsEmitter.on<{ id: string }>('product:select', (data) => {
@@ -65,11 +67,15 @@ eventsEmitter.on<{ id: string }>('product:select', (data) => {
 			card.disableButton();
 		}
 		modal.open(card.render());
+	}).catch((err) => {
+		console.log(`Ошибка : ${err}`);
 	});
 });
 eventsEmitter.on<{ id: string }>('product:tobasket', (data) => {
 	api.getProductItem(`${data.id}`).then((data) => {
 		basketModal.addProduct(data);
+	}).catch((err) => {
+		console.log(`Ошибка : ${err}`);
 	});
 });
 eventsEmitter.on('basket:change', () => {
