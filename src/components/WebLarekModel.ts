@@ -78,7 +78,7 @@ export class ContactsData {
 export class BasketModal {
 	items: IProduct[] = [];
 	total: number = 0;
-	protected IdArray: string[] = [];
+	protected idArray: string[] = [];
 	protected events: IEvents;
 	constructor(events: IEvents) {
 		this.events = events;
@@ -105,9 +105,9 @@ export class BasketModal {
 
 	getIdBasketItems() {
 		this.items.forEach((item) => {
-			this.IdArray.push(item.id);
+			this.idArray.push(item.id);
 		});
-		return this.IdArray;
+		return this.idArray;
 	}
 
 	clearBasket() {
