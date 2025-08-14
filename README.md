@@ -25,6 +25,8 @@
 * TS - основная логика приложения.
 * Webpack - сборка и компиляция проекта.
 
+[![Tech](https://skillicons.dev/icons?i=html,css,ts,webpack&theme=dark)](https://skillicons.dev)
+
 ## Структура проекта:
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
